@@ -1,0 +1,94 @@
+_schema-version: "3.2"
+ID: zbtp-day5exercise2faraon
+description: A Fiori application.
+version: 0.0.1
+modules:
+- name: zbtp-day5exercise2faraon-destination-content
+  type: com.sap.application.content
+  requires:
+  - name: zbtp-day5exercise2faraon-destination-service
+    parameters:
+      content-target: true
+  - name: zbtp-day5exercise2faraon-repo-host
+    parameters:
+      service-key:
+        name: zbtp-day5exercise2faraon-repo-host-key
+  - name: zbtp-day5exercise2faraon-uaa
+    parameters:
+      service-key:
+        name: zbtp-day5exercise2faraon-uaa-key
+  parameters:
+    content:
+      instance:
+        destinations:
+        - Name: zbtp-day5exercise2faraon_html_repo_host
+          ServiceInstanceName: zbtp-day5exercise2faraon-html5-srv
+          ServiceKeyName: zbtp-day5exercise2faraon-repo-host-key
+          sap.cloud.service: zbtp-day5exercise2faraon
+        - Authentication: OAuth2UserTokenExchange
+          Name: zbtp-day5exercise2faraon_uaa
+          ServiceInstanceName: zbtp-day5exercise2faraon-xsuaa-srv
+          ServiceKeyName: zbtp-day5exercise2faraon-uaa-key
+          sap.cloud.service: zbtp-day5exercise2faraon
+        existing_destinations_policy: ignore
+  build-parameters:
+    no-source: true
+- name: zbtp-day5exercise2faraon-app-content
+  type: com.sap.application.content
+  path: .
+  requires:
+  - name: zbtp-day5exercise2faraon-repo-host
+    parameters:
+      content-target: true
+  build-parameters:
+    build-result: resources
+    requires:
+    - artifacts:
+      - zbtpday5exercise2faraon.zip
+      name: zbtpday5exercise2faraon
+      target-path: resources/
+- name: zbtpday5exercise2faraon
+  type: html5
+  path: .
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+resources:
+- name: zbtp-day5exercise2faraon-destination-service
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      HTML5Runtime_enabled: true
+      init_data:
+        instance:
+          destinations:
+          - Authentication: NoAuthentication
+            Name: ui5
+            ProxyType: Internet
+            Type: HTTP
+            URL: https://ui5.sap.com
+          existing_destinations_policy: update
+      version: 1.0.0
+    service: destination
+    service-name: zbtp-day5exercise2faraon-destination-service
+    service-plan: lite
+- name: zbtp-day5exercise2faraon-uaa
+  type: org.cloudfoundry.managed-service
+  parameters:
+    path: ./xs-security.json
+    service: xsuaa
+    service-name: zbtp-day5exercise2faraon-xsuaa-srv
+    service-plan: application
+- name: zbtp-day5exercise2faraon-repo-host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-name: zbtp-day5exercise2faraon-html5-srv
+    service-plan: app-host
+parameters:
+  deploy_mode: html5-repo
+  enable-parallel-deployments: true

@@ -1,0 +1,67 @@
+<mvc:View controllerName="sapips.training.jsonbinding.controller.JSONBinding"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:f="sap.ui.layout.form" displayBlock="true"
+    xmlns="sap.m">
+    <Page id="page" title="{i18n>title}">
+        <content>
+            <Panel id = "idPanel1" headerText="Data Binding Basics" class= "sapUIResponsiveMargin" width="auto">
+                <content> 
+                    <f:SimpleForm>
+                        <f:content>
+                            <Label text="EID" />
+                            <Input value = "{/EID}" enabled="{/Enabled}" />
+                            <Label text="Enabled" />
+                            <CheckBox selected = "{/Enabled}" />
+                        </f:content>
+                    </f:SimpleForm>
+                </content>
+            </Panel>
+            <Panel id = "idPanel2" headerText="Address Details" class= "sapUIResponsiveMargin" width="auto">
+                <content> 
+                    <f:SimpleForm>
+                        <f:content>
+                            <Label text="Address" />
+                            <Text value = "{oAddressModel>/Address/Street>} {oAddressModel>/Address/Zip} {oAddressModel/Address/Contry" class = "sapUISmallMarginBottom " />
+                            <Link text ="Send Email" href = "{ path: '/EID', formatter: '.formatter.formatMail' }" />
+                            <Label text = "Sales Amount" />
+                            <Input class = "sapUISmallMarginBegin" maxLength="8" value = "{ parts: [ {path: 'oAddressModel>/SalesAmount'}, {path: 'oAddressModel>/CurrencyCode'} ], type: 'sap.ui.model.type.Currency', formatOptions: {showMeasure: false} }" />
+                        </f:content>
+                    </f:SimpleForm>
+                </content>
+            </Panel>
+             <Panel id = "idPanel3" headerText="Aggregetion Panel" class= "sapUIResponsiveMargin" width="auto">
+                <content> 
+                    <List items="ProductsModel>/Products" itemPress="onSelectproduct" mode="SingleSelectMaster" selectionChange="onSelectproduct">
+                        <items>
+                            <ObjectListItem title = "{ProductsModel>ProductName}" number="{ parts: [ {path: 'ProductsModel>nitPrice'}, {path: ‘/oAddressModle>/CurrencyCode'} ], type: 'sap.ui.model.type.Currency', formatOptions: { showMeasure: false } }" 
+                                                numberUnit="{oAddressModel>/CurrencyCode}"/>
+                            <ObjectAttribute text = "{ProductsModle>QuantityPerUnit}" />
+                            <ObjectAttribute title = "{Current Stock Value}" text = "{ parts: [ {path: 'ProductsModel>UnitPrice'}, {path: 'ProductsModle>UnitsInStock'}, {path: 'oAddressModle//CurrencyCode'} ], formatter: '.formatter.formatStockValue' }" />
+                        </items>
+                    </List>
+                </content>
+            </Panel>
+            <Panel id = "idPanel4" headerText="Product Details" class= "sapUIResponsiveMargin" width="auto">
+                <content> 
+                    <f:SimpleForm id = "idProductDetails">
+                        <f:content>
+                            <Label text = "ProductId" />
+                            <Input value = "{ProductsModel>ProductID}" />
+                            <Label text="ProductName" />
+                            <Input value = "{ProductsModel>ProductName}" />
+                            <Label text="QuantityPernit" />
+                            <Input value = "{ProductsModel>QuantityPernit}" />
+                            <Label text="UnitPrice" />
+                            <Input value = "{ProductsModel>UnitPrice}" />
+                            <Label text="UnitInStock" />
+                            <Input value = "{ProductsModel>UnitInStock}" />
+                            <Label text="Discontinued" />
+                            <Input value = "{ProductsModel>Discontinued}" />
+                           
+                        </f:content>
+                    </f:SimpleForm>
+                </content>
+            </Panel>
+        </content>
+    </Page>
+</mvc:View>
